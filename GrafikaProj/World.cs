@@ -7,6 +7,8 @@ using Assimp;
 using SharpGL;
 using AssimpSample;
 using SharpGL.Enumerations;
+using SharpGL.SceneGraph.Primitives;
+using SharpGL.SceneGraph.Quadrics;
 
 namespace GrafikaProj
 {
@@ -163,6 +165,7 @@ namespace GrafikaProj
         {
             m_width = width;
             m_height = height;
+            gl.Viewport(0, 0, width, height);
             gl.MatrixMode(OpenGL.GL_PROJECTION);      // selektuj Projection Matrix
             gl.LoadIdentity();
             gl.Perspective(50f, (double) width/height, 1, 20000);
@@ -174,45 +177,90 @@ namespace GrafikaProj
         {
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
 
-            drawGround(gl);
-
             gl.PushMatrix();
+            gl.MatrixMode(OpenGL.GL_MODELVIEW);
+            gl.LoadIdentity();
             gl.Translate(0.0f, 0.0f, -m_sceneDistance);
-            gl.Rotate(m_xRotation, -90.0f, 0.0f, 0.0f);
+            gl.Rotate(m_xRotation, 1.0f, 0.0f, 0.0f);
             gl.Rotate(m_yRotation, 0.0f, 1.0f, 0.0f);
 
-            m_scene.Draw();
+            DrawGround(gl);
+
+            DrawPistol(gl);
+
+            DrawCube(gl);
+            DrawCilinder(gl);
             gl.PopMatrix();
-            // Oznaci kraj iscrtavanja
-
-
             
 
             gl.Flush();
         }
 
-        public void drawGround(OpenGL gl)
+        /// <summary>
+        /// Draws pistol model
+        /// </summary>
+        /// <param name="gl"></param>
+        public void DrawPistol(OpenGL gl)
         {
-            //gl.PushMatrix();
-            //gl.Scale(1.0f, 1.0f, 1.0f);
-            gl.Translate(0.0f, -150.0f, -m_sceneDistance);
-            gl.Rotate(m_xRotation, 3000.0f, 0.0f, 0.0f);
-            gl.Rotate(m_yRotation, 0.0f, 3000.0f, 0.0f);
-            gl.Begin(OpenGL.GL_QUADS);
             
-            // -0.5f, 0.5f, 0.0f, //top left
-            //0.5f, 0.5f, 0.0f, // top right
-            //0.5f, -0.5f, 0.0f //bottom right
-            // - 0.5f, -0.5f, 0.0f
-            gl.Vertex(-3000.0f, 3000.0f, 0.0f);
-            gl.Vertex(3000.0f, 3000.0f, 0.0f);
-            gl.Vertex(3000.0f, -3000.0f, 0.0f);
-            gl.Vertex(-3000.0f, -3000.0f, 0.0f);
+
+            gl.PushMatrix();
+
+            m_scene.Draw();
+            
+            gl.PopMatrix();
+        }
+
+        /// <summary>
+        /// Draws ground using GL_QUADS
+        /// </summary>
+        /// <param name="gl"></param>
+        public void DrawGround(OpenGL gl)
+        {
+            
+
+            gl.PushMatrix();
+            gl.Begin(OpenGL.GL_QUADS);
+
+
+           
+            gl.Vertex(-1000.0f, 0.0f, 1000.0f);
+            gl.Vertex(1000.0f, 0.0f, 1000.0f);
+            gl.Vertex(1000.0f, 0.0f, -1000.0f);
+            gl.Vertex(-1000.0f, 0.0f, -1000.0f);
+
 
             gl.End();
 
 
-            //gl.PopMatrix();
+            gl.PopMatrix();
+        }
+
+        public void DrawCube(OpenGL gl)
+        {
+
+            gl.PushMatrix();
+            gl.Translate(0.0f, 0.0f, -700.0f);
+            gl.Scale(100, 150, 100);
+            gl.Color(1.0f, 1.0f, 0.0f);
+            Cube cube = new Cube();
+            cube.Render(gl, SharpGL.SceneGraph.Core.RenderMode.Render);
+            gl.PopMatrix();
+
+        }
+
+
+        public void DrawCilinder(OpenGL gl)
+        {
+            gl.PushMatrix();
+            gl.Color(0.0f, 1.0f, 1.0f);
+            gl.Scale(100, 100, 100);
+            Cylinder cil = new Cylinder();
+            cil.CreateInContext(gl);
+            cil.Render(gl, SharpGL.SceneGraph.Core.RenderMode.Render);
+            gl.Disable(OpenGL.GL_LIGHT0);
+            gl.Disable(OpenGL.GL_LIGHTING);
+            gl.PopMatrix();
         }
         #endregion
 
