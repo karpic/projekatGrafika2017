@@ -103,6 +103,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="model\metak\Bullet.3ds">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="model\pistolj\pistol.3DS">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

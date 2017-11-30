@@ -24,3 +24,4 @@ C:\Users\Arsenije\source\repos\GrafikaProj\GrafikaProj\obj\Debug\GrafikaProj.csp
 C:\Users\Arsenije\source\repos\GrafikaProj\GrafikaProj\obj\Debug\GrafikaProj.csproj.CoreCompileInputs.cache
 C:\Users\Arsenije\source\repos\GrafikaProj\GrafikaProj\obj\Debug\GrafikaProj.exe
 C:\Users\Arsenije\source\repos\GrafikaProj\GrafikaProj\obj\Debug\GrafikaProj.pdb
+C:\Users\Arsenije\source\repos\GrafikaProj\GrafikaProj\bin\Debug\model\metak\Bullet.3ds

@@ -42,7 +42,7 @@ namespace GrafikaProj
             // Kreiranje OpenGL sveta
             try
             {
-                m_world = new World(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "model\\pistolj"), "pistol.3DS", (int)openGLControl.Width, (int)openGLControl.Height, openGLControl.OpenGL);
+                m_world = new World(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "model\\pistolj"), "pistol.3DS", Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "model\\metak"),"Bullet.3ds", (int)openGLControl.Width, (int)openGLControl.Height, openGLControl.OpenGL);
             }
             catch (Exception e)
             {
@@ -94,7 +94,7 @@ namespace GrafikaProj
                 case Key.D: m_world.RotationY += 5.0f; break;
                 case Key.Add: m_world.SceneDistance -= 700.0f; break;
                 case Key.Subtract: m_world.SceneDistance += 700.0f; break;
-                case Key.F2:
+               /* case Key.F2:
                     OpenFileDialog opfModel = new OpenFileDialog();
                     bool result = (bool)opfModel.ShowDialog();
                     if (result)
@@ -112,7 +112,7 @@ namespace GrafikaProj
                             MessageBox.Show("Neuspesno kreirana instanca OpenGL sveta:\n" + exp.Message, "GRESKA", MessageBoxButton.OK);
                         }
                     }
-                    break;
+                    break;*/
             }
         }
     }

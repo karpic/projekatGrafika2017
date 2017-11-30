@@ -18,13 +18,11 @@ namespace GrafikaProj
     {
         #region Private polja
 
-        private float[] groundVertices = new float[]
-        {
-            -0.5f, 0.5f, 0.0f, //top left
-            0.5f, 0.5f, 0.0f, // top right
-            0.5f, -0.5f, 0.0f //bottom right
-            -0.5f, -0.5f, 0.0f //bottom left
-        };
+        private String text3D = "Predmet: Racunarska grafika \n" +  
+                                "Sk.god: 2017/18 \n" + 
+                                 "Ime: Arsenije \n" + 
+                                 "Prezime: Karpic \n" + 
+                                 "Sifra zad: 19.2";
 
         /// <summary>
         /// Ugao rotacije sveta oko X-ose.
@@ -59,6 +57,7 @@ namespace GrafikaProj
         private int m_height;
 
         private AssimpScene m_scene;
+        private AssimpScene m_bullet;
 
         private float m_sceneDistance = 7000.0f;
 
@@ -73,6 +72,12 @@ namespace GrafikaProj
         {
             get { return m_scene; }
             set { m_scene = value; }
+        }
+
+        public AssimpScene Bullet
+        {
+            get { return m_bullet; }
+            set { m_bullet = value; }
         }
 
         public float SceneDistance
@@ -125,9 +130,10 @@ namespace GrafikaProj
             set { m_depthTesting = value; }
         }
         #endregion
-        public World(String scenePath, String sceneFileName, int height, int width, OpenGL gl)
+        public World(String scenePath, String sceneFileName, String bulletPath, String BulletFileName, int height, int width, OpenGL gl)
         {
             this.m_scene = new AssimpScene(scenePath, sceneFileName, gl);
+            this.m_bullet = new AssimpScene(bulletPath, BulletFileName, gl);
             this.m_height = height;
             this.m_width = width;
 
@@ -156,6 +162,9 @@ namespace GrafikaProj
             }
             m_scene.LoadScene();
             m_scene.Initialize();
+
+            m_bullet.LoadScene();
+            m_bullet.Initialize();
         }
 
         /// <summary>
@@ -189,7 +198,13 @@ namespace GrafikaProj
             DrawPistol(gl);
 
             DrawCube(gl);
+
             DrawCilinder(gl);
+
+            DrawBullet(gl);
+
+            Draw3DText(gl);
+
             gl.PopMatrix();
             
 
@@ -205,9 +220,23 @@ namespace GrafikaProj
             
 
             gl.PushMatrix();
-
+            gl.Translate(0.0f, 250.0f, 650.0f);
+            gl.Scale(1.2f, 1.2f, 1.2f);
             m_scene.Draw();
             
+            gl.PopMatrix();
+        }
+
+        public void DrawBullet(OpenGL gl)
+        {
+
+            gl.PushMatrix();
+            gl.Translate(0.0f, 400.0f, 0.0f);
+            gl.Scale(10, 10, 10);
+            gl.Color(1.0f, 0.0f, 1.0f);
+            
+            m_bullet.Draw();
+
             gl.PopMatrix();
         }
 
@@ -229,6 +258,7 @@ namespace GrafikaProj
             gl.Vertex(1000.0f, 0.0f, -1000.0f);
             gl.Vertex(-1000.0f, 0.0f, -1000.0f);
 
+            
 
             gl.End();
 
@@ -240,8 +270,8 @@ namespace GrafikaProj
         {
 
             gl.PushMatrix();
-            gl.Translate(0.0f, 0.0f, -700.0f);
-            gl.Scale(100, 150, 100);
+            gl.Translate(0.0f, 160f, -700.0f);
+            gl.Scale(300, 150, 100);
             gl.Color(1.0f, 1.0f, 0.0f);
             Cube cube = new Cube();
             cube.Render(gl, SharpGL.SceneGraph.Core.RenderMode.Render);
@@ -252,15 +282,70 @@ namespace GrafikaProj
 
         public void DrawCilinder(OpenGL gl)
         {
+
+            //crtanje prve konzerve
             gl.PushMatrix();
+            gl.Translate(0.0f, 300.0f, -700.0f);
+            gl.Rotate(-90.0f, 0.0f, 0.0f);
             gl.Color(0.0f, 1.0f, 1.0f);
-            gl.Scale(100, 100, 100);
+            gl.Scale(50, 50, 200);
+            //gl.Translate(0.0f, 200.0f, -1000.0f);
             Cylinder cil = new Cylinder();
+            cil.TopRadius = cil.BaseRadius;
             cil.CreateInContext(gl);
+            
             cil.Render(gl, SharpGL.SceneGraph.Core.RenderMode.Render);
-            gl.Disable(OpenGL.GL_LIGHT0);
-            gl.Disable(OpenGL.GL_LIGHTING);
+            
             gl.PopMatrix();
+
+            //crtanje druge konzerve
+
+            gl.PushMatrix();
+            gl.Translate(150.0f, 300.0f, -700.0f);
+            gl.Rotate(-90.0f, 0.0f, 0.0f);
+            gl.Color(0.5f, 0.5f, 1.0f);
+            gl.Scale(50, 50, 200);
+            //gl.Translate(0.0f, 200.0f, -1000.0f);
+            Cylinder cil1 = new Cylinder();
+            cil1.TopRadius = cil.BaseRadius;
+            cil1.CreateInContext(gl);
+
+            cil1.Render(gl, SharpGL.SceneGraph.Core.RenderMode.Render);
+
+            gl.PopMatrix();
+
+            //crtanje trece konzerve
+
+            gl.PushMatrix();
+            gl.Translate(-150.0f, 300.0f, -700.0f);
+            gl.Rotate(-90.0f, 0.0f, 0.0f);
+            gl.Color(0.5f, 0.5f, 1.0f);
+            gl.Scale(50, 50, 200);
+            //gl.Translate(0.0f, 200.0f, -1000.0f);
+            Cylinder cil2 = new Cylinder();
+            cil2.TopRadius = cil.BaseRadius;
+            cil2.CreateInContext(gl);
+
+            cil2.Render(gl, SharpGL.SceneGraph.Core.RenderMode.Render);
+
+            gl.PopMatrix();
+
+        }
+
+        public void Draw3DText(OpenGL gl)
+        {
+
+            //visina 350
+            //sirina 525
+            gl.PushMatrix();
+            //gl.MatrixMode(OpenGL.GL_PROJECTION);
+            //gl.LoadIdentity();
+            gl.Ortho2D(-200, 200, -150, 150) ;
+            gl.Color(1.0f, 1.0f, 1.0f);
+            gl.Scale(100, 100, 100);
+            gl.DrawText3D("Verdana", 12f, 1f, 0.1f, text3D);
+            gl.PopMatrix();
+
         }
         #endregion
 
