@@ -205,7 +205,9 @@ namespace GrafikaProj
 
             DrawBullet(gl);
 
+            
             Draw3DText(gl);
+            
 
             gl.PopMatrix();
             
@@ -336,10 +338,11 @@ namespace GrafikaProj
 
         public void Draw3DText(OpenGL gl)
         {
-            
-           
+
+            gl.Viewport(m_width / 2, 0, m_width / 2, m_height / 2);
 
             gl.PushMatrix();
+            
             gl.Translate(1000.0f, 0.0f, 0.0f);
             gl.Color(1.0f, 1.0f, 1.0f);
             gl.Scale(100, 100, 100);
@@ -357,7 +360,7 @@ namespace GrafikaProj
             gl.PopMatrix();
 
             gl.PushMatrix();
-           
+            
             gl.Translate(1000.0f, -200.0f, 0.0f);
             gl.Color(1.0f, 1.0f, 1.0f);
             gl.Scale(100, 100, 100);
@@ -382,6 +385,8 @@ namespace GrafikaProj
             gl.DrawText3D("Verdana", 12f, 1f, 0.1f, "Sifra zad: 19.2");
 
             gl.PopMatrix();
+
+            gl.Viewport(0, 0, m_width, m_height);
             
         }
         #endregion
