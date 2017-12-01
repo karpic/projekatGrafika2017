@@ -189,10 +189,12 @@ namespace GrafikaProj
             gl.PushMatrix();
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
             gl.LoadIdentity();
+            
             gl.Translate(0.0f, 0.0f, -m_sceneDistance);
             gl.Rotate(m_xRotation, 1.0f, 0.0f, 0.0f);
             gl.Rotate(m_yRotation, 0.0f, 1.0f, 0.0f);
 
+            
             DrawGround(gl);
 
             DrawPistol(gl);
@@ -334,18 +336,53 @@ namespace GrafikaProj
 
         public void Draw3DText(OpenGL gl)
         {
+            
+           
 
-            //visina 350
-            //sirina 525
             gl.PushMatrix();
-            //gl.MatrixMode(OpenGL.GL_PROJECTION);
-            //gl.LoadIdentity();
-            gl.Ortho2D(-200, 200, -150, 150) ;
+            gl.Translate(1000.0f, 0.0f, 0.0f);
             gl.Color(1.0f, 1.0f, 1.0f);
             gl.Scale(100, 100, 100);
-            gl.DrawText3D("Verdana", 12f, 1f, 0.1f, text3D);
+            gl.DrawText3D("Verdana", 12f, 1f, 0.1f, "Predmet: Racunarska grafika");
+            
             gl.PopMatrix();
 
+            gl.PushMatrix();
+            
+            gl.Translate(1000.0f, -100.0f, 0.0f);
+            gl.Color(1.0f, 1.0f, 1.0f);
+            gl.Scale(100, 100, 100);
+            gl.DrawText3D("Verdana", 12f, 1f, 0.1f, "Sk.god: 2017/18");
+
+            gl.PopMatrix();
+
+            gl.PushMatrix();
+           
+            gl.Translate(1000.0f, -200.0f, 0.0f);
+            gl.Color(1.0f, 1.0f, 1.0f);
+            gl.Scale(100, 100, 100);
+            gl.DrawText3D("Verdana", 12f, 1f, 0.1f, "Ime: Arsenije");
+
+            gl.PopMatrix();
+
+            gl.PushMatrix();
+            
+            gl.Translate(1000.0f, -300.0f, 0.0f);
+            gl.Color(1.0f, 1.0f, 1.0f);
+            gl.Scale(100, 100, 100);
+            gl.DrawText3D("Verdana", 12f, 1f, 0.1f, "Prezime: Karpic");
+
+            gl.PopMatrix();
+
+            gl.PushMatrix();
+            
+            gl.Translate(1000.0f, -400.0f, 0.0f);
+            gl.Color(1.0f, 1.0f, 1.0f);
+            gl.Scale(100, 100, 100);
+            gl.DrawText3D("Verdana", 12f, 1f, 0.1f, "Sifra zad: 19.2");
+
+            gl.PopMatrix();
+            
         }
         #endregion
 
