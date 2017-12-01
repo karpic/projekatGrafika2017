@@ -338,55 +338,55 @@ namespace GrafikaProj
 
         public void Draw3DText(OpenGL gl)
         {
-
+            
             gl.Viewport(m_width / 2, 0, m_width / 2, m_height / 2);
-
+            
             gl.PushMatrix();
             
-            gl.Translate(1000.0f, 0.0f, 0.0f);
+            gl.Translate(0.0f, 0.0f, 0.0f);
             gl.Color(1.0f, 1.0f, 1.0f);
-            gl.Scale(100, 100, 100);
-            gl.DrawText3D("Verdana", 12f, 1f, 0.1f, "Predmet: Racunarska grafika");
+            gl.Scale(300, 300, 300);
+            gl.DrawText3D("Verdana italic", 12f, 1f, 0.1f, "Predmet: Racunarska grafika");
             
             gl.PopMatrix();
 
             gl.PushMatrix();
             
-            gl.Translate(1000.0f, -100.0f, 0.0f);
+            gl.Translate(0.0f, -200.0f, 0.0f);
             gl.Color(1.0f, 1.0f, 1.0f);
-            gl.Scale(100, 100, 100);
-            gl.DrawText3D("Verdana", 12f, 1f, 0.1f, "Sk.god: 2017/18");
+            gl.Scale(300, 300, 300);
+            gl.DrawText3D("Verdana italic", 12f, 1f, 0.1f, "Sk.god: 2017/18");
 
             gl.PopMatrix();
 
             gl.PushMatrix();
             
-            gl.Translate(1000.0f, -200.0f, 0.0f);
+            gl.Translate(0.0f, -400.0f, 0.0f);
             gl.Color(1.0f, 1.0f, 1.0f);
-            gl.Scale(100, 100, 100);
-            gl.DrawText3D("Verdana", 12f, 1f, 0.1f, "Ime: Arsenije");
+            gl.Scale(300, 300, 300);
+            gl.DrawText3D("Verdana italic", 12f, 1f, 0.1f, "Ime: Arsenije");
 
             gl.PopMatrix();
 
             gl.PushMatrix();
             
-            gl.Translate(1000.0f, -300.0f, 0.0f);
+            gl.Translate(0.0f, -600.0f, 0.0f);
             gl.Color(1.0f, 1.0f, 1.0f);
-            gl.Scale(100, 100, 100);
-            gl.DrawText3D("Verdana", 12f, 1f, 0.1f, "Prezime: Karpic");
+            gl.Scale(300, 300, 300);
+            gl.DrawText3D("Verdana italic", 12f, 1f, 0.1f, "Prezime: Karpic");
 
             gl.PopMatrix();
 
             gl.PushMatrix();
             
-            gl.Translate(1000.0f, -400.0f, 0.0f);
+            gl.Translate(0.0f, -800.0f, 0.0f);
             gl.Color(1.0f, 1.0f, 1.0f);
-            gl.Scale(100, 100, 100);
-            gl.DrawText3D("Verdana", 12f, 1f, 0.1f, "Sifra zad: 19.2");
+            gl.Scale(300, 300, 300);
+            gl.DrawText3D("Verdana italic", 12f, 1f, 0.1f, "Sifra zad: 19.2");
 
             gl.PopMatrix();
 
-            gl.Viewport(0, 0, m_width, m_height);
+            gl.Viewport(0, 0, m_width, m_height); //resetuj na stari view port
             
         }
         #endregion
