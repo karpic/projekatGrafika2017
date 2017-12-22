@@ -138,5 +138,41 @@ namespace GrafikaProj
                 m_world.BulletCaliber = val;
             }
         }
+
+        private void ambientRVal_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            float val = float.Parse(ambientRVal.Text, CultureInfo.InvariantCulture.NumberFormat);
+            if(m_world != null)
+            {
+                m_world.AmbientR = val;
+            }
+        }
+
+        private void ambientGVal_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            float val = float.Parse(ambientGVal.Text, CultureInfo.InvariantCulture.NumberFormat);
+            if (m_world != null)
+            {
+                m_world.AmbientG = val;
+            }
+        }
+
+        private void ambientBVal_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            float val = float.Parse(ambientBVal.Text, CultureInfo.InvariantCulture.NumberFormat);
+            if (m_world != null)
+            {
+                m_world.AmbientB = val;
+            }
+        }
+
+        private void ambientUVal_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            float val = float.Parse(ambientUVal.Text, CultureInfo.InvariantCulture.NumberFormat);
+            if (m_world != null)
+            {
+                m_world.AmbientU = val;
+            }
+        }
     }
 }

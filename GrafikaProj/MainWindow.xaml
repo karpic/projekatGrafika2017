@@ -16,6 +16,14 @@
                     <TextBox Name="targetHeightVal" Width="120" Margin="0" Text="" VerticalAlignment="Center" HorizontalAlignment="Center" TextChanged="tagetValueChanged"/>
                     <Label x:Name="caliber" Content="Kalibar metka" Height="26" VerticalAlignment="Top"/>
                     <TextBox Name="bulletCaliberVal" Width="120" Margin="0" Text="" VerticalAlignment="Center" HorizontalAlignment="Center" TextChanged="bulletCaliberVal_TextChanged"/>
+                    <Label x:Name="ambientR" Content="ambientR" Height="26" VerticalAlignment="Top"/>
+                    <TextBox Name="ambientRVal" Width="120" Margin="0" Text="" VerticalAlignment="Center" HorizontalAlignment="Center" TextChanged="ambientRVal_TextChanged"/>
+                    <Label x:Name="ambientG" Content="ambientG" Height="26" VerticalAlignment="Top"/>
+                    <TextBox Name="ambientGVal" Width="120" Margin="0" Text="" VerticalAlignment="Center" HorizontalAlignment="Center" TextChanged="ambientGVal_TextChanged"/>
+                    <Label x:Name="ambientB" Content="ambientB" Height="26" VerticalAlignment="Top"/>
+                    <TextBox Name="ambientBVal" Width="120" Margin="0" Text="" VerticalAlignment="Center" HorizontalAlignment="Center" TextChanged="ambientBVal_TextChanged"/>
+                    <Label x:Name="ambientU" Content="ambientU" Height="26" VerticalAlignment="Top"/>
+                    <TextBox Name="ambientUVal" Width="120" Margin="0" Text="" VerticalAlignment="Center" HorizontalAlignment="Center" TextChanged="ambientUVal_TextChanged"/>
                 </ToolBar>
             </ToolBarTray>
             <sharpGL:OpenGLControl 

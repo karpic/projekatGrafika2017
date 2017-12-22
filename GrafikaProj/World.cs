@@ -22,6 +22,11 @@ namespace GrafikaProj
 
         private float bulletCaliber = 10.0f;
 
+        private float ambientR = 0.0f;
+        private float ambientG = 0.0f;
+        private float ambientB = 0.3f;
+        private float ambientU = 1.0f;
+
         /// <summary>
         /// Ugao rotacije sveta oko X-ose.
         /// </summary>
@@ -63,7 +68,53 @@ namespace GrafikaProj
 
         #region Public polja
 
-        
+        public float AmbientR
+        {
+            get
+            {
+                return ambientR;
+            }
+            set
+            {
+                ambientR = value;
+            }
+        }
+
+        public float AmbientG
+        {
+            get
+            {
+                return ambientG;
+            }
+            set
+            {
+                ambientG = value;
+            }
+        }
+
+        public float AmbientB
+        {
+            get
+            {
+                return ambientB;
+            }
+            set
+            {
+                ambientB = value;
+            }
+        }
+
+        public float AmbientU
+        {
+            get
+            {
+                return ambientU;
+            }
+            set
+            {
+                ambientU = value;
+            }
+        }
 
         /// <summary>
         /// Odredjuje visinu cilindara koji su mete
@@ -192,6 +243,7 @@ namespace GrafikaProj
             gl.ColorMaterial(OpenGL.GL_FRONT, OpenGL.GL_AMBIENT_AND_DIFFUSE);
 
             setupLighting(gl);
+            setupTargetLight(gl);
 
             m_scene.LoadScene();
             m_scene.Initialize();
@@ -213,25 +265,25 @@ namespace GrafikaProj
             gl.Perspective(50f, (double) width/height, 1, 20000);
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
             gl.LoadIdentity();
+            /*gl.LookAt(600.0f, 250.0f, 650.0f,
+                      0.0f, 250.0f, 650.0f,
+                      0.0f, 0.0f, 1.0f);*/
 
-            
         }
 
         public void Draw(OpenGL gl)
         {
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
 
-            
-
             gl.PushMatrix();
-            gl.MatrixMode(OpenGL.GL_MODELVIEW);
-            gl.LoadIdentity();
             
+            //gl.MatrixMode(OpenGL.GL_MODELVIEW);
+            //gl.LoadIdentity();
+
+
             gl.Translate(0.0f, 0.0f, -m_sceneDistance);
             gl.Rotate(m_xRotation, 1.0f, 0.0f, 0.0f);
             gl.Rotate(m_yRotation, 0.0f, 1.0f, 0.0f);
-
-            
 
             DrawGround(gl);
 
@@ -248,7 +300,6 @@ namespace GrafikaProj
             
 
             gl.PopMatrix();
-            
 
             gl.Flush();
         }
@@ -274,6 +325,27 @@ namespace GrafikaProj
             gl.Enable(OpenGL.GL_LIGHT0);
 
             gl.Enable(OpenGL.GL_NORMALIZE);
+        }
+
+        public void setupTargetLight(OpenGL gl)
+        {
+            float[] ambijentalnaKomponenta = { ambientR, ambientG, ambientB, ambientU };
+            float[] difuznaKomponenta = { 0.0f, 0.0f, 0.7f, 1.0f };
+            float[] lightPos1 = { 200.0f, 500.0f, -700.0f, 1.0f };
+            float[] smer = { 0.0f, -1.0f, 0.0f };
+
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_POSITION, lightPos1);
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_AMBIENT, ambijentalnaKomponenta);
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_DIFFUSE, difuznaKomponenta);
+            // Podesi parametre reflektorkskog izvora
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_DIRECTION, smer);
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_CUTOFF, 25.0f);
+
+            gl.Enable(OpenGL.GL_LIGHTING);
+            gl.Enable(OpenGL.GL_LIGHT1);
+            // Pozicioniraj svetlosni izvor
+            gl.Enable(OpenGL.GL_NORMALIZE);
+            
         }
 
         /// <summary>
