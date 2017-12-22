@@ -15,6 +15,7 @@ using System.IO;
 using System.Reflection;
 using SharpGL.SceneGraph;
 using Microsoft.Win32;
+using System.Globalization;
 
 namespace GrafikaProj
 {
@@ -29,6 +30,8 @@ namespace GrafikaProj
         ///	 Instanca OpenGL "sveta" - klase koja je zaduzena za iscrtavanje koriscenjem OpenGL-a.
         /// </summary>
         World m_world = null;
+
+        
 
         #endregion Atributi
 
@@ -113,6 +116,26 @@ namespace GrafikaProj
                         }
                     }
                     break;*/
+            }
+        }
+
+        private void tagetValueChanged(object sender, TextChangedEventArgs e)
+        {
+            float val = float.Parse(targetHeightVal.Text, CultureInfo.InvariantCulture.NumberFormat);
+
+            if(m_world != null)
+            {
+                m_world.TargetValueHeight = val;
+            }
+        }
+
+        private void bulletCaliberVal_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            float val = float.Parse(bulletCaliberVal.Text, CultureInfo.InvariantCulture.NumberFormat);
+
+            if(m_world != null)
+            {
+                m_world.BulletCaliber = val;
             }
         }
     }

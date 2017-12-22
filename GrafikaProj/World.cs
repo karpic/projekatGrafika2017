@@ -18,11 +18,9 @@ namespace GrafikaProj
     {
         #region Private polja
 
-        private String text3D = "Predmet: Racunarska grafika \n" +  
-                                "Sk.god: 2017/18 \n" + 
-                                 "Ime: Arsenije \n" + 
-                                 "Prezime: Karpic \n" + 
-                                 "Sifra zad: 19.2";
+        private float targetValueHeight = 200.0f;
+
+        private float bulletCaliber = 10.0f;
 
         /// <summary>
         /// Ugao rotacije sveta oko X-ose.
@@ -64,6 +62,35 @@ namespace GrafikaProj
         #endregion
 
         #region Public polja
+
+        
+
+        /// <summary>
+        /// Odredjuje visinu cilindara koji su mete
+        /// </summary>
+        public float TargetValueHeight
+        {
+            get
+            {
+                return targetValueHeight;
+            }
+            set
+            {
+                targetValueHeight = value;
+            }
+        }
+
+        public float BulletCaliber
+        {
+            get
+            {
+                return bulletCaliber;
+            }
+            set
+            {
+                bulletCaliber = value;
+            }
+        }
 
         /// <summary>
         /// Scena
@@ -160,6 +187,12 @@ namespace GrafikaProj
             {
                 gl.Enable(OpenGL.GLU_CULLING);
             }
+            gl.FrontFace(OpenGL.GL_CCW);
+            gl.Enable(OpenGL.GL_COLOR_MATERIAL);
+            gl.ColorMaterial(OpenGL.GL_FRONT, OpenGL.GL_AMBIENT_AND_DIFFUSE);
+
+            setupLighting(gl);
+
             m_scene.LoadScene();
             m_scene.Initialize();
 
@@ -180,11 +213,15 @@ namespace GrafikaProj
             gl.Perspective(50f, (double) width/height, 1, 20000);
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
             gl.LoadIdentity();
+
+            
         }
 
         public void Draw(OpenGL gl)
         {
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
+
+            
 
             gl.PushMatrix();
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
@@ -195,6 +232,7 @@ namespace GrafikaProj
             gl.Rotate(m_yRotation, 0.0f, 1.0f, 0.0f);
 
             
+
             DrawGround(gl);
 
             DrawPistol(gl);
@@ -213,6 +251,29 @@ namespace GrafikaProj
             
 
             gl.Flush();
+        }
+
+        /// <summary>
+        /// Podesava osvetljenje u scecni
+        /// </summary>
+        /// <param name="gl"></param>
+        public void setupLighting(OpenGL gl)
+        {
+            float[] ambijentalnaKomponenta = { 0.3f, 0.3f, 0.3f, 1.0f };
+            float[] difuznaKomponenta = { 0.7f, 0.7f, 0.7f, 1.0f };
+            float[] lightPos0 = { 600.0f, -300.0f, 650.0f };
+            //pridruzivanje ambijentalne i difuzne komponente svetlosnom izvoru LIGHT0
+            gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_POSITION, lightPos0);
+            gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_AMBIENT, ambijentalnaKomponenta);
+            gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_DIFFUSE, difuznaKomponenta);
+
+            //podesavanje cuttoff-a na 180 da bi svetlost bila tackasta
+            gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_SPOT_CUTOFF, 180.0f);
+
+            gl.Enable(OpenGL.GL_LIGHTING);
+            gl.Enable(OpenGL.GL_LIGHT0);
+
+            gl.Enable(OpenGL.GL_NORMALIZE);
         }
 
         /// <summary>
@@ -236,8 +297,9 @@ namespace GrafikaProj
 
             gl.PushMatrix();
             gl.Translate(0.0f, 400.0f, 0.0f);
-            gl.Scale(10, 10, 10);
+            gl.Scale(bulletCaliber, bulletCaliber, 10);
             gl.Color(1.0f, 0.0f, 1.0f);
+            
             
             m_bullet.Draw();
 
@@ -292,7 +354,7 @@ namespace GrafikaProj
             gl.Translate(0.0f, 300.0f, -700.0f);
             gl.Rotate(-90.0f, 0.0f, 0.0f);
             gl.Color(0.0f, 1.0f, 1.0f);
-            gl.Scale(50, 50, 200);
+            gl.Scale(50, 50, targetValueHeight);
             //gl.Translate(0.0f, 200.0f, -1000.0f);
             Cylinder cil = new Cylinder();
             cil.TopRadius = cil.BaseRadius;
@@ -308,7 +370,7 @@ namespace GrafikaProj
             gl.Translate(150.0f, 300.0f, -700.0f);
             gl.Rotate(-90.0f, 0.0f, 0.0f);
             gl.Color(0.5f, 0.5f, 1.0f);
-            gl.Scale(50, 50, 200);
+            gl.Scale(50, 50, targetValueHeight);
             //gl.Translate(0.0f, 200.0f, -1000.0f);
             Cylinder cil1 = new Cylinder();
             cil1.TopRadius = cil.BaseRadius;
@@ -324,7 +386,7 @@ namespace GrafikaProj
             gl.Translate(-150.0f, 300.0f, -700.0f);
             gl.Rotate(-90.0f, 0.0f, 0.0f);
             gl.Color(0.5f, 0.5f, 1.0f);
-            gl.Scale(50, 50, 200);
+            gl.Scale(50, 50, targetValueHeight);
             //gl.Translate(0.0f, 200.0f, -1000.0f);
             Cylinder cil2 = new Cylinder();
             cil2.TopRadius = cil.BaseRadius;
