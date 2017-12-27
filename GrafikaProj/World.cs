@@ -426,6 +426,7 @@ namespace GrafikaProj
             
 
             gl.PushMatrix();
+            
             gl.Translate(0.0f, 250.0f, 650.0f);
             gl.Scale(1.2f, 1.2f, 1.2f);
             gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Woood]);
@@ -436,7 +437,9 @@ namespace GrafikaProj
             m_scene.Draw();
             //gl.Disable(OpenGL.GL_TEXTURE_GEN_S);
             //gl.Disable(OpenGL.GL_TEXTURE_GEN_T);
+            
             gl.PopMatrix();
+            
         }
 
         public void DrawBullet(OpenGL gl)
@@ -504,13 +507,20 @@ namespace GrafikaProj
 
             //crtanje prve konzerve
             gl.PushMatrix();
+            
             gl.Translate(0.0f, 300.0f, -700.0f);
-            gl.Rotate(-90.0f, 0.0f, 0.0f);
-            //gl.Color(0.0f, 1.0f, 1.0f);
-            gl.Scale(50, 50, targetValueHeight);
+            
+            gl.Color(0.0f, 0.0f, 0.0f);
+           
             //gl.Translate(0.0f, 200.0f, -1000.0f);
-            //gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Rust]);
+            gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Rust]);
+            
+           //// 
+            
+            gl.Rotate(-90.0f, 0.0f, 0.0f);
+            gl.Scale(50, 50, targetValueHeight);
             Cylinder cil = new Cylinder();
+            cil.TextureCoords = true;
             cil.TopRadius = cil.BaseRadius;
             cil.CreateInContext(gl);
             
@@ -525,16 +535,17 @@ namespace GrafikaProj
             gl.Rotate(-90.0f, 0.0f, 0.0f);
             //gl.Color(0.5f, 0.5f, 1.0f);
             gl.Scale(50, 50, targetValueHeight);
-            
+
             //gl.Translate(0.0f, 200.0f, -1000.0f);
-            
+            gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Rust]);
 
             Cylinder cil1 = new Cylinder();
             cil1.TopRadius = cil.BaseRadius;
+            cil1.TextureCoords = true;
             cil1.CreateInContext(gl);
 
             cil1.Render(gl, SharpGL.SceneGraph.Core.RenderMode.Render);
-            //gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Rust]);
+            
 
             gl.PopMatrix();
 
@@ -543,12 +554,13 @@ namespace GrafikaProj
             gl.PushMatrix();
             gl.Translate(-150.0f, 300.0f, -700.0f);
             gl.Rotate(-90.0f, 0.0f, 0.0f);
-            gl.Color(0.5f, 0.5f, 1.0f);
+            //gl.Color(0.5f, 0.5f, 1.0f);
             gl.Scale(50, 50, targetValueHeight);
             gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Rust]);
             gl.TexCoord(1.0f, 0.0f);
             //gl.Translate(0.0f, 200.0f, -1000.0f);
             Cylinder cil2 = new Cylinder();
+            cil2.TextureCoords = true;
             cil2.TopRadius = cil.BaseRadius;
             cil2.CreateInContext(gl);
 
