@@ -9,6 +9,8 @@ using AssimpSample;
 using SharpGL.Enumerations;
 using SharpGL.SceneGraph.Primitives;
 using SharpGL.SceneGraph.Quadrics;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace GrafikaProj
 {
@@ -36,6 +38,22 @@ namespace GrafikaProj
         /// Ugao rotacije sveta oko Y-ose.
         /// </summary>
         private float m_yRotation = 0.0f;
+
+        /// <summary>
+        /// Identifikatori tekstura
+        /// </summary>
+        private enum TextureObjects { Concrete = 0, Woood, Rust};
+        private readonly int m_textureCount = Enum.GetNames(typeof(TextureObjects)).Length;
+
+        /// <summary>
+        /// Indentifikatori OpenGL tekstura
+        /// </summary>
+        private uint[] m_textures = null;
+
+        /// <summary>
+        /// Putanje do fajlova za teksture
+        /// </summary>
+        private string[] m_textureFiles = { "..//..//images//concrete.jpg", "..//..//images/wood.jpg", "..//..//images/rust.jpg" };
 
         /// <summary>
         /// Indikator stanja mehanizma za iscrtavanje nevidljivih povrsina.
@@ -214,7 +232,7 @@ namespace GrafikaProj
             this.m_bullet = new AssimpScene(bulletPath, BulletFileName, gl);
             this.m_height = height;
             this.m_width = width;
-
+            m_textures = new uint[m_textureCount];
 
         }
 
@@ -250,6 +268,47 @@ namespace GrafikaProj
 
             m_bullet.LoadScene();
             m_bullet.Initialize();
+
+            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_NEAREST);     // Nearest Neighbour Filtering
+            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_NEAREST);     // Nearest Neighbour Filtering
+            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_S, OpenGL.GL_REPEAT);
+            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_T, OpenGL.GL_REPEAT);
+            
+            gl.TexEnv(OpenGL.GL_TEXTURE_ENV, OpenGL.GL_TEXTURE_ENV_MODE, OpenGL.GL_ADD);
+
+            gl.Enable(OpenGL.GL_TEXTURE_2D);
+
+            gl.GenTextures(m_textureCount, m_textures);
+            for(int i = 0; i < m_textureCount; ++i)
+            {
+                //Pridruzuje se tekstura odredjenom identifikatoru
+                gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[i]);
+
+                // Ucitaj sliku i podesi parametre teksture
+                Bitmap image = new Bitmap(m_textureFiles[i]);
+                // rotiramo sliku zbog koordinantog sistema opengl-a
+                image.RotateFlip(RotateFlipType.RotateNoneFlipY);
+                Rectangle rect = new Rectangle(0, 0, image.Width, image.Height);
+                // RGBA format (dozvoljena providnost slike tj. alfa kanal)
+                BitmapData imageData = image.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadOnly,
+                                                      System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+                gl.Build2DMipmaps(OpenGL.GL_TEXTURE_2D, (int)OpenGL.GL_RGBA8, image.Width, image.Height, OpenGL.GL_BGRA, OpenGL.GL_UNSIGNED_BYTE, imageData.Scan0);
+                //gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_NEAREST);		// Nearest Neighbour Filtering
+                //gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_NEAREST);		// Nearest Neighbour Filtering
+                //gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_S, OpenGL.GL_REPEAT);
+                //gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_T, OpenGL.GL_REPEAT);
+
+                //gl.Enable(OpenGL.GL_TEXTURE_GEN_S);
+                //gl.Enable(OpenGL.GL_TEXTURE_GEN_T);
+
+                image.UnlockBits(imageData);
+                image.Dispose();
+            }
+
+            
+            //gl.TexGen(OpenGL.GL_S, OpenGL.GL_TEXTURE_GEN_MODE, OpenGL.GL_SPHERE_MAP);
+            //gl.TexGen(OpenGL.GL_T, OpenGL.GL_TEXTURE_GEN_MODE, OpenGL.GL_SPHERE_MAP);
         }
 
         /// <summary>
@@ -274,6 +333,10 @@ namespace GrafikaProj
         public void Draw(OpenGL gl)
         {
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
+            gl.MatrixMode(OpenGL.GL_MODELVIEW);
+            gl.Viewport(0, 0, m_width, m_height);
+            
+            
 
             gl.PushMatrix();
             
@@ -284,6 +347,10 @@ namespace GrafikaProj
             gl.Translate(0.0f, 0.0f, -m_sceneDistance);
             gl.Rotate(m_xRotation, 1.0f, 0.0f, 0.0f);
             gl.Rotate(m_yRotation, 0.0f, 1.0f, 0.0f);
+            gl.LookAt(100.0f, 250.0f, 650.0f,
+                       0.0f, 250.0f, 650.0f,
+                       0.0f, 1.0f, 0.0f);
+
 
             DrawGround(gl);
 
@@ -300,6 +367,8 @@ namespace GrafikaProj
             
 
             gl.PopMatrix();
+
+            
 
             gl.Flush();
         }
@@ -359,8 +428,14 @@ namespace GrafikaProj
             gl.PushMatrix();
             gl.Translate(0.0f, 250.0f, 650.0f);
             gl.Scale(1.2f, 1.2f, 1.2f);
+            gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Woood]);
+
+            //gl.Enable(OpenGL.GL_TEXTURE_GEN_S);
+            //gl.Enable(OpenGL.GL_TEXTURE_GEN_T);
+            gl.TexCoord(1.0f, 1.0f);
             m_scene.Draw();
-            
+            //gl.Disable(OpenGL.GL_TEXTURE_GEN_S);
+            //gl.Disable(OpenGL.GL_TEXTURE_GEN_T);
             gl.PopMatrix();
         }
 
@@ -387,13 +462,19 @@ namespace GrafikaProj
             
 
             gl.PushMatrix();
+
+            gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Concrete]);
             gl.Begin(OpenGL.GL_QUADS);
 
-
-           
+            gl.Color(0.5f, 0.5f, 0.5f);
+            gl.Normal(0.0f, -1.0f, 0.0f);
+            gl.TexCoord(0.0f, 0.0f);
             gl.Vertex(-1000.0f, 0.0f, 1000.0f);
+            gl.TexCoord(0.0f, 1.0f);
             gl.Vertex(1000.0f, 0.0f, 1000.0f);
+            gl.TexCoord(1.0f, 1.0f);
             gl.Vertex(1000.0f, 0.0f, -1000.0f);
+            gl.TexCoord(1.0f, 0.0f);
             gl.Vertex(-1000.0f, 0.0f, -1000.0f);
 
             
@@ -425,9 +506,10 @@ namespace GrafikaProj
             gl.PushMatrix();
             gl.Translate(0.0f, 300.0f, -700.0f);
             gl.Rotate(-90.0f, 0.0f, 0.0f);
-            gl.Color(0.0f, 1.0f, 1.0f);
+            //gl.Color(0.0f, 1.0f, 1.0f);
             gl.Scale(50, 50, targetValueHeight);
             //gl.Translate(0.0f, 200.0f, -1000.0f);
+            //gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Rust]);
             Cylinder cil = new Cylinder();
             cil.TopRadius = cil.BaseRadius;
             cil.CreateInContext(gl);
@@ -441,14 +523,18 @@ namespace GrafikaProj
             gl.PushMatrix();
             gl.Translate(150.0f, 300.0f, -700.0f);
             gl.Rotate(-90.0f, 0.0f, 0.0f);
-            gl.Color(0.5f, 0.5f, 1.0f);
+            //gl.Color(0.5f, 0.5f, 1.0f);
             gl.Scale(50, 50, targetValueHeight);
+            
             //gl.Translate(0.0f, 200.0f, -1000.0f);
+            
+
             Cylinder cil1 = new Cylinder();
             cil1.TopRadius = cil.BaseRadius;
             cil1.CreateInContext(gl);
 
             cil1.Render(gl, SharpGL.SceneGraph.Core.RenderMode.Render);
+            //gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Rust]);
 
             gl.PopMatrix();
 
@@ -459,6 +545,8 @@ namespace GrafikaProj
             gl.Rotate(-90.0f, 0.0f, 0.0f);
             gl.Color(0.5f, 0.5f, 1.0f);
             gl.Scale(50, 50, targetValueHeight);
+            gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Rust]);
+            gl.TexCoord(1.0f, 0.0f);
             //gl.Translate(0.0f, 200.0f, -1000.0f);
             Cylinder cil2 = new Cylinder();
             cil2.TopRadius = cil.BaseRadius;
