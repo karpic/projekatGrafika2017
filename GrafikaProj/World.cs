@@ -43,7 +43,17 @@ namespace GrafikaProj
         private DispatcherTimer pucanjeTimer;
         private float pistolRotation = 0.0f;
         private int pistolFireCounter = 0;
-        private bool pistolGoingUp;
+
+
+        /// <summary>
+        /// Polja potrebna za animaciju letenja metka do meta 
+        /// </summary>
+        private DispatcherTimer bulletTimer;
+        private float bulletAnimationPosition = 0.0f;
+        private float temporaryBulletPosition = 0.0f;
+        private int bulletFireCounter = 0;
+
+
 
         private float targetValueHeight = 200.0f;
 
@@ -281,24 +291,36 @@ namespace GrafikaProj
             this.timer2 = new DispatcherTimer();
             timer2.Interval = TimeSpan.FromMilliseconds(3f);
             timer2.Tick += new EventHandler(UpdateAnimation2);
-            timer2.Start();
+            //timer2.Start();
         }
 
         public void stopTargetTimers()
         {
             this.timer1.Stop();
-            this.timer2.Stop();
+            //this.timer2.Stop();
         }
 
         private void UpdateAnimation1(object sender, EventArgs e)
         {
-            if (targetsGoingUp)
+            /*if (targetsGoingUp)
             {
                 targetAnimationHeight += 50.0f;
             }
             else
             {
                 targetAnimationHeight -= 50.0f;
+            }*/
+            targetAnimationHeight += 5.0f;
+            if(targetAnimationHeight == 100.0f)
+            {
+                targetAnimationHeight = 0.0f;
+                targetJumpCounter += 1;
+            }
+            if (targetJumpCounter==3)
+            {
+                targetJumpCounter = 0;
+                stopTargetTimers();
+                resetAnimation();
             }
 
         }
@@ -310,7 +332,7 @@ namespace GrafikaProj
             if (!targetsGoingUp)
             {
                 targetAnimationHeight = 0.0f;
-                
+
             }
             
             targetsGoingUp = !targetsGoingUp;
@@ -327,10 +349,11 @@ namespace GrafikaProj
         private void PostaviPistolj(object sender, EventArgs e)
         {
             pistolAnimationPosition += 30.0f;
+            bulletAnimationPosition += 30.0f;
             if (pistolAnimationPosition%300 == 0)
             {
                 pistolTimer.Stop();
-                
+                temporaryBulletPosition = bulletAnimationPosition;
                 StartFireAnimation();
             }
         }
@@ -341,22 +364,49 @@ namespace GrafikaProj
             pucanjeTimer.Interval = TimeSpan.FromMilliseconds(20);
             pucanjeTimer.Tick += new EventHandler(RotirajPistolj);
             pucanjeTimer.Start();
+
+            /*this.bulletTimer = new DispatcherTimer();
+            bulletTimer.Interval = TimeSpan.FromMilliseconds(20);
+            bulletTimer.Tick += new EventHandler(RotirajPistolj);
+            bulletTimer.Start();*/
+            
         }
 
         private void RotirajPistolj(object sender, EventArgs e)
         {
             pistolRotation += 5.0f;
+            bulletAnimationPosition -= 170.0f;
+            
             if(pistolRotation == 45.0f)
             {
                 pistolRotation = 0.0f;
+                //bulletAnimationPosition = 0.0f;
+                bulletAnimationPosition = temporaryBulletPosition;
                 pistolFireCounter += 1;
             }
             if(pistolFireCounter == 3)
             {
                 pucanjeTimer.Stop();
+                //bulletTimer.Stop();
                 startTargetTimers(); 
             }
         }
+
+        public void resetAnimation()
+        {
+            targetJumpCounter = 0;
+            targetAnimationHeight = 0.0f;
+        
+            pistolAnimationPosition = 0.0f;
+
+        
+            pistolRotation = 0.0f;
+            pistolFireCounter = 0;
+
+            bulletAnimationPosition = 0.0f;
+            bulletFireCounter = 0;
+
+    }
 
         public void Initialize(OpenGL gl)
         {
@@ -618,7 +668,7 @@ namespace GrafikaProj
         {
 
             gl.PushMatrix();
-            gl.Translate(0.0f, 400.0f, 0.0f);
+            gl.Translate(0.0f, 400.0f, 450.0f + bulletAnimationPosition);
             gl.Scale(bulletCaliber, bulletCaliber, 10);
             gl.Color(1.0f, 0.0f, 1.0f);
             
