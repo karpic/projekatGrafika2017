@@ -11,6 +11,8 @@ using SharpGL.SceneGraph.Primitives;
 using SharpGL.SceneGraph.Quadrics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Windows.Threading;
+using System.Threading;
 
 namespace GrafikaProj
 {
@@ -20,13 +22,36 @@ namespace GrafikaProj
     {
         #region Private polja
 
+        /// <summary>
+        /// targert timeri i polja
+        /// </summary>
+        private DispatcherTimer timer1;
+        private DispatcherTimer timer2;
+        private int targetJumpCounter = 0;
+        private float targetAnimationHeight = 0.0f;
+        private bool targetsGoingUp;
+
+        /// <summary>
+        /// Pistolj tajmeri i polja za postavljanje pistolja u poziciju za pucanje
+        /// </summary>
+        private DispatcherTimer pistolTimer;
+        private float pistolAnimationPosition = 0.0f;
+
+        /// <summary>
+        /// tajmeri i polja za animaciju pucanja pistolja
+        /// </summary>
+        private DispatcherTimer pucanjeTimer;
+        private float pistolRotation = 0.0f;
+        private int pistolFireCounter = 0;
+        private bool pistolGoingUp;
+
         private float targetValueHeight = 200.0f;
 
         private float bulletCaliber = 10.0f;
 
         private float ambientR = 0.0f;
         private float ambientG = 0.0f;
-        private float ambientB = 0.3f;
+        private float ambientB = 1.0f;
         private float ambientU = 1.0f;
 
         /// <summary>
@@ -233,6 +258,7 @@ namespace GrafikaProj
             this.m_height = height;
             this.m_width = width;
             m_textures = new uint[m_textureCount];
+            
 
         }
 
@@ -242,32 +268,113 @@ namespace GrafikaProj
         }
 
         #region Metode
+        public void startTargetTimers()
+        {
+            targetAnimationHeight = 0.0f;
+            targetsGoingUp = true;
+
+            this.timer1 = new DispatcherTimer();
+            timer1.Interval = TimeSpan.FromMilliseconds(20);
+            timer1.Tick += new EventHandler(UpdateAnimation1);
+            timer1.Start();
+
+            this.timer2 = new DispatcherTimer();
+            timer2.Interval = TimeSpan.FromMilliseconds(3f);
+            timer2.Tick += new EventHandler(UpdateAnimation2);
+            timer2.Start();
+        }
+
+        public void stopTargetTimers()
+        {
+            this.timer1.Stop();
+            this.timer2.Stop();
+        }
+
+        private void UpdateAnimation1(object sender, EventArgs e)
+        {
+            if (targetsGoingUp)
+            {
+                targetAnimationHeight += 50.0f;
+            }
+            else
+            {
+                targetAnimationHeight -= 50.0f;
+            }
+
+        }
+
+       
+
+        private void UpdateAnimation2(object sender, EventArgs e)
+        {
+            if (!targetsGoingUp)
+            {
+                targetAnimationHeight = 0.0f;
+                
+            }
+            
+            targetsGoingUp = !targetsGoingUp;
+        }
+
+        public void startPistolAnimation()
+        {
+            this.pistolTimer = new DispatcherTimer();
+            pistolTimer.Interval = TimeSpan.FromMilliseconds(20);
+            pistolTimer.Tick += new EventHandler(PostaviPistolj);
+            pistolTimer.Start();
+        }
+
+        private void PostaviPistolj(object sender, EventArgs e)
+        {
+            pistolAnimationPosition += 30.0f;
+            if (pistolAnimationPosition%300 == 0)
+            {
+                pistolTimer.Stop();
+                
+                StartFireAnimation();
+            }
+        }
+
+        public void StartFireAnimation()
+        {
+            this.pucanjeTimer = new DispatcherTimer();
+            pucanjeTimer.Interval = TimeSpan.FromMilliseconds(20);
+            pucanjeTimer.Tick += new EventHandler(RotirajPistolj);
+            pucanjeTimer.Start();
+        }
+
+        private void RotirajPistolj(object sender, EventArgs e)
+        {
+            pistolRotation += 5.0f;
+            if(pistolRotation == 45.0f)
+            {
+                pistolRotation = 0.0f;
+                pistolFireCounter += 1;
+            }
+            if(pistolFireCounter == 3)
+            {
+                pucanjeTimer.Stop();
+                startTargetTimers(); 
+            }
+        }
+
         public void Initialize(OpenGL gl)
         {
-            gl.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-            gl.Color(0.5f, 0.5f, 0.5f);
+
+            //gl.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            //gl.Color(0.5f, 0.5f, 0.5f);
             // Model sencenja na flat (konstantno)
             gl.ShadeModel(OpenGL.GL_FLAT);
-            if (m_depthTesting)
-            {
-                gl.Enable(OpenGL.GL_DEPTH_TEST);
-            }
-            if (m_culling)
-            {
-                gl.Enable(OpenGL.GLU_CULLING);
-            }
+            gl.Enable(OpenGL.GL_DEPTH_TEST);
+            gl.Enable(OpenGL.GLU_CULLING);
             gl.FrontFace(OpenGL.GL_CCW);
             gl.Enable(OpenGL.GL_COLOR_MATERIAL);
             gl.ColorMaterial(OpenGL.GL_FRONT, OpenGL.GL_AMBIENT_AND_DIFFUSE);
 
             setupLighting(gl);
-            setupTargetLight(gl);
+            
 
-            m_scene.LoadScene();
-            m_scene.Initialize();
-
-            m_bullet.LoadScene();
-            m_bullet.Initialize();
+            
 
             gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_NEAREST);     // Nearest Neighbour Filtering
             gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_NEAREST);     // Nearest Neighbour Filtering
@@ -306,9 +413,21 @@ namespace GrafikaProj
                 image.Dispose();
             }
 
+            m_scene.LoadScene();
+            m_scene.Initialize();
+
+            m_bullet.LoadScene();
+            m_bullet.Initialize();
+
             
-            //gl.TexGen(OpenGL.GL_S, OpenGL.GL_TEXTURE_GEN_MODE, OpenGL.GL_SPHERE_MAP);
-            //gl.TexGen(OpenGL.GL_T, OpenGL.GL_TEXTURE_GEN_MODE, OpenGL.GL_SPHERE_MAP);
+        }
+
+        /// <summary>
+        ///  Funkcija ograničava vrednost na opseg min - max
+        /// </summary>
+        public static float Clamp(float value, float min, float max)
+        {
+            return (value < min) ? min : (value > max) ? max : value;
         }
 
         /// <summary>
@@ -324,26 +443,16 @@ namespace GrafikaProj
             gl.Perspective(50f, (double) width/height, 1, 20000);
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
             gl.LoadIdentity();
-            /*gl.LookAt(600.0f, 250.0f, 650.0f,
-                      0.0f, 250.0f, 650.0f,
-                      0.0f, 0.0f, 1.0f);*/
+
 
         }
 
         public void Draw(OpenGL gl)
         {
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
-            gl.MatrixMode(OpenGL.GL_MODELVIEW);
-            gl.Viewport(0, 0, m_width, m_height);
-            
-            
 
             gl.PushMatrix();
             
-            //gl.MatrixMode(OpenGL.GL_MODELVIEW);
-            //gl.LoadIdentity();
-
-
             gl.Translate(0.0f, 0.0f, -m_sceneDistance);
             gl.Rotate(m_xRotation, 1.0f, 0.0f, 0.0f);
             gl.Rotate(m_yRotation, 0.0f, 1.0f, 0.0f);
@@ -351,7 +460,7 @@ namespace GrafikaProj
                        0.0f, 250.0f, 650.0f,
                        0.0f, 1.0f, 0.0f);
 
-
+            TestKockica(gl, 0.0f, 800.0f, -700.0f);
             DrawGround(gl);
 
             DrawPistol(gl);
@@ -379,42 +488,103 @@ namespace GrafikaProj
         /// <param name="gl"></param>
         public void setupLighting(OpenGL gl)
         {
-            float[] ambijentalnaKomponenta = { 0.3f, 0.3f, 0.3f, 1.0f };
-            float[] difuznaKomponenta = { 0.7f, 0.7f, 0.7f, 1.0f };
-            float[] lightPos0 = { 600.0f, -300.0f, 650.0f };
+            
+
+            float[] ambijentalnaKomponenta = { 1.0f, 1.0f, 1.0f, 1.0f };
+            float[] difuznaKomponenta = { 1.0f, 1.0f, 1.0f, 1.0f };
+            //float[] specularnaKomponenta = { 1.0f, 1.0f, 1.0f, 1.0f };
+            //float[] lightPos0 = { 600.0f, -300.0f, 650.0f };
+            float[] lightPos0 = { 500.0f, 500.0f, 850.0f };
             //pridruzivanje ambijentalne i difuzne komponente svetlosnom izvoru LIGHT0
+            gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_SPOT_CUTOFF, 180.0f);
             gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_POSITION, lightPos0);
             gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_AMBIENT, ambijentalnaKomponenta);
             gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_DIFFUSE, difuznaKomponenta);
-
+            //gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_SPECULAR, specularnaKomponenta);
             //podesavanje cuttoff-a na 180 da bi svetlost bila tackasta
-            gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_SPOT_CUTOFF, 180.0f);
+            
 
             gl.Enable(OpenGL.GL_LIGHTING);
             gl.Enable(OpenGL.GL_LIGHT0);
 
+
+            
+
+            float[] ambijentalnaKomponentaBlue = { ambientR, ambientG, ambientB, 1.0f };
+            float[] difuznaKomponentaBlue = { 0.0f, 0.0f, 1.0f, 1.0f };
+           // float[] specularnaKomponentaBlue = { 0.0f, 0.0f, 1.0f, 1.0f };
+            float[] lightPos1 = { 0.0f, 800.0f, -700.0f, 1.0f };
+            //float[] lightPos1 = { 500f, 300.0f, -700.0f, 1.0f };
+            
+
+            float[] smer = { 0.0f, 0.0f, -1.0f };
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_DIRECTION, smer);
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_CUTOFF, 25.0f);
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_POSITION, lightPos1);
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_AMBIENT, ambijentalnaKomponentaBlue);
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_DIFFUSE, difuznaKomponentaBlue);
+            //gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPECULAR, specularnaKomponentaBlue);
+            // Podesi parametre reflektorkskog izvora
+
+
+
+            gl.Enable(OpenGL.GL_LIGHTING);
+            gl.Enable(OpenGL.GL_LIGHT1);
+
             gl.Enable(OpenGL.GL_NORMALIZE);
+
+            
         }
 
         public void setupTargetLight(OpenGL gl)
         {
-            float[] ambijentalnaKomponenta = { ambientR, ambientG, ambientB, ambientU };
-            float[] difuznaKomponenta = { 0.0f, 0.0f, 0.7f, 1.0f };
-            float[] lightPos1 = { 200.0f, 500.0f, -700.0f, 1.0f };
-            float[] smer = { 0.0f, -1.0f, 0.0f };
+            
 
+            float[] ambijentalnaKomponenta = { ambientR, ambientG, ambientB, 1.0f };
+            float[] difuznaKomponenta = { 0.0f, 0.0f, 1.0f, 1.0f };
+            float[] specularnaKomponenta = { 0.0f, 0.0f, 1.0f, 1.0f };
+            float[] lightPos1 = { 0.0f, 500.0f, -700.0f, 1.0f };
+            //float[] lightPos1 = { 500f, 300.0f, -700.0f, 1.0f };
+            
+
+            float[] smer = { 0.0f, -1.0f, 0.0f };
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_DIRECTION, smer);
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_CUTOFF, 25.0f);
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_POSITION, lightPos1);
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_AMBIENT, ambijentalnaKomponenta);
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_DIFFUSE, difuznaKomponenta);
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPECULAR, specularnaKomponenta);
             // Podesi parametre reflektorkskog izvora
-            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_DIRECTION, smer);
-            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_CUTOFF, 25.0f);
+            
+            
 
             gl.Enable(OpenGL.GL_LIGHTING);
             gl.Enable(OpenGL.GL_LIGHT1);
-            // Pozicioniraj svetlosni izvor
+            
             gl.Enable(OpenGL.GL_NORMALIZE);
             
+        }
+
+        public void TestKockica(OpenGL gl, float a, float b, float c)
+        {
+            gl.PushMatrix();
+
+            gl.Translate(a, b, c);
+
+            gl.Color(1.0f, 0.0f, 0.0f);
+
+            
+
+            gl.Rotate(-90.0f, 0.0f, 0.0f);
+            gl.Scale(10, 10, 10);
+            Cylinder cil = new Cylinder();
+           
+            cil.TopRadius = cil.BaseRadius;
+            cil.CreateInContext(gl);
+
+            cil.Render(gl, SharpGL.SceneGraph.Core.RenderMode.Render);
+
+            gl.PopMatrix();
         }
 
         /// <summary>
@@ -427,14 +597,16 @@ namespace GrafikaProj
 
             gl.PushMatrix();
             
-            gl.Translate(0.0f, 250.0f, 650.0f);
+            gl.Translate(0.0f, 250.0f, 650.0f + pistolAnimationPosition);
+            gl.Rotate(pistolRotation, 0.0f, 0.0f);
             gl.Scale(1.2f, 1.2f, 1.2f);
             gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Woood]);
 
             //gl.Enable(OpenGL.GL_TEXTURE_GEN_S);
             //gl.Enable(OpenGL.GL_TEXTURE_GEN_T);
-            gl.TexCoord(1.0f, 1.0f);
+            
             m_scene.Draw();
+            
             //gl.Disable(OpenGL.GL_TEXTURE_GEN_S);
             //gl.Disable(OpenGL.GL_TEXTURE_GEN_T);
             
@@ -504,11 +676,18 @@ namespace GrafikaProj
 
         public void DrawCilinder(OpenGL gl)
         {
-
+            float specificCubeHeight;
+            specificCubeHeight = targetAnimationHeight;
             //crtanje prve konzerve
             gl.PushMatrix();
+
             
-            gl.Translate(0.0f, 300.0f, -700.0f);
+
+            
+           // specificCubeHeight = Clamp(specificCubeHeight, 0.0f, 3.0f);
+
+            //gl.Translate(0.0f, 300.0f + targetValueHeight, -700.0f);
+            gl.Translate(0.0f, 300.0f + specificCubeHeight, -700.0f);
             
             gl.Color(0.0f, 0.0f, 0.0f);
            
@@ -531,7 +710,7 @@ namespace GrafikaProj
             //crtanje druge konzerve
 
             gl.PushMatrix();
-            gl.Translate(150.0f, 300.0f, -700.0f);
+            gl.Translate(150.0f, 300.0f + specificCubeHeight, -700.0f);
             gl.Rotate(-90.0f, 0.0f, 0.0f);
             //gl.Color(0.5f, 0.5f, 1.0f);
             gl.Scale(50, 50, targetValueHeight);
@@ -552,7 +731,7 @@ namespace GrafikaProj
             //crtanje trece konzerve
 
             gl.PushMatrix();
-            gl.Translate(-150.0f, 300.0f, -700.0f);
+            gl.Translate(-150.0f, 300.0f + specificCubeHeight, -700.0f);
             gl.Rotate(-90.0f, 0.0f, 0.0f);
             //gl.Color(0.5f, 0.5f, 1.0f);
             gl.Scale(50, 50, targetValueHeight);

@@ -97,6 +97,7 @@ namespace GrafikaProj
                 case Key.D: m_world.RotationY += 5.0f; break;
                 case Key.Add: m_world.SceneDistance -= 700.0f; break;
                 case Key.Subtract: m_world.SceneDistance += 700.0f; break;
+                case Key.X: m_world.startPistolAnimation(); break;
                /* case Key.F2:
                     OpenFileDialog opfModel = new OpenFileDialog();
                     bool result = (bool)opfModel.ShowDialog();
