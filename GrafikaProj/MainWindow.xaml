@@ -13,17 +13,20 @@
             <ToolBarTray DockPanel.Dock="Top">
                 <ToolBar HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Label x:Name="targetHeight" Content="Visina meta" Height="26" VerticalAlignment="Top"/>
-                    <TextBox Name="targetHeightVal" Width="120" Margin="0" Text="" VerticalAlignment="Center" HorizontalAlignment="Center" TextChanged="tagetValueChanged"/>
+                    <Button Name="targetHeightUp" Width="40" Margin="0" Content="+" Background="Blue" VerticalAlignment="Center" HorizontalAlignment="Center" Click="targetHup" ></Button>
+                    <Button Name="targetHeightDown" Width="40" Margin="0" Content="-" Background="Red" VerticalAlignment="Center" HorizontalAlignment="Center" Click="targetHdown" ></Button>
                     <Label x:Name="caliber" Content="Kalibar metka" Height="26" VerticalAlignment="Top"/>
-                    <TextBox Name="bulletCaliberVal" Width="120" Margin="0" Text="" VerticalAlignment="Center" HorizontalAlignment="Center" TextChanged="bulletCaliberVal_TextChanged"/>
+                    <Button Name="calibarUp" Width="40" Margin="0" Content="+" Background="Blue" VerticalAlignment="Center" HorizontalAlignment="Center" Click="calibarVUp" ></Button>
+                    <Button Name="calibarDown" Width="40" Margin="0" Content="-" Background="Red" VerticalAlignment="Center" HorizontalAlignment="Center" Click="calibarDown_Click" ></Button>
                     <Label x:Name="ambientR" Content="ambientR" Height="26" VerticalAlignment="Top"/>
-                    <TextBox Name="ambientRVal" Width="120" Margin="0" Text="" VerticalAlignment="Center" HorizontalAlignment="Center" TextChanged="ambientRVal_TextChanged"/>
+                    <Button Name="ambientRUp" Width="40" Margin="0" Content="+" Background="Blue" VerticalAlignment="Center" HorizontalAlignment="Center" Click="ambientRUp_Click"></Button>
+                    <Button Name="ambientRDown" Width="40" Margin="0" Content="-" Background="Red" VerticalAlignment="Center" HorizontalAlignment="Center" Click="ambientRDown_Click"></Button>
                     <Label x:Name="ambientG" Content="ambientG" Height="26" VerticalAlignment="Top"/>
-                    <TextBox Name="ambientGVal" Width="120" Margin="0" Text="" VerticalAlignment="Center" HorizontalAlignment="Center" TextChanged="ambientGVal_TextChanged"/>
+                    <Button Name="ambientGUp" Width="40" Margin="0" Content="+" Background="Blue" VerticalAlignment="Center" HorizontalAlignment="Center" Click="ambientGUp_Click"></Button>
+                    <Button Name="ambientGDown" Width="40" Margin="0" Content="-" Background="Red" VerticalAlignment="Center" HorizontalAlignment="Center"  Click="ambientGDown_Click"></Button>
                     <Label x:Name="ambientB" Content="ambientB" Height="26" VerticalAlignment="Top"/>
-                    <TextBox Name="ambientBVal" Width="120" Margin="0" Text="" VerticalAlignment="Center" HorizontalAlignment="Center" TextChanged="ambientBVal_TextChanged"/>
-                    <Label x:Name="ambientU" Content="ambientU" Height="26" VerticalAlignment="Top"/>
-                    <TextBox Name="ambientUVal" Width="120" Margin="0" Text="" VerticalAlignment="Center" HorizontalAlignment="Center" TextChanged="ambientUVal_TextChanged"/>
+                    <Button Name="ambientBUp" Width="40" Margin="0" Content="+" Background="Blue" VerticalAlignment="Center" HorizontalAlignment="Center"  Click="ambientBUp_Click"></Button>
+                    <Button Name="ambientBDown" Width="40" Margin="0" Content="-" Background="Red" VerticalAlignment="Center" HorizontalAlignment="Center"  Click="ambientBDown_Click"></Button>
                 </ToolBar>
             </ToolBarTray>
             <sharpGL:OpenGLControl 

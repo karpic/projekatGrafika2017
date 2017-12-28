@@ -302,14 +302,7 @@ namespace GrafikaProj
 
         private void UpdateAnimation1(object sender, EventArgs e)
         {
-            /*if (targetsGoingUp)
-            {
-                targetAnimationHeight += 50.0f;
-            }
-            else
-            {
-                targetAnimationHeight -= 50.0f;
-            }*/
+            
             targetAnimationHeight += 5.0f;
             if(targetAnimationHeight == 100.0f)
             {
@@ -365,10 +358,7 @@ namespace GrafikaProj
             pucanjeTimer.Tick += new EventHandler(RotirajPistolj);
             pucanjeTimer.Start();
 
-            /*this.bulletTimer = new DispatcherTimer();
-            bulletTimer.Interval = TimeSpan.FromMilliseconds(20);
-            bulletTimer.Tick += new EventHandler(RotirajPistolj);
-            bulletTimer.Start();*/
+           
             
         }
 
@@ -411,29 +401,23 @@ namespace GrafikaProj
         public void Initialize(OpenGL gl)
         {
 
-            //gl.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-            //gl.Color(0.5f, 0.5f, 0.5f);
+            gl.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            gl.Color(0.5f, 0.5f, 0.5f);
             // Model sencenja na flat (konstantno)
             gl.ShadeModel(OpenGL.GL_FLAT);
             gl.Enable(OpenGL.GL_DEPTH_TEST);
             gl.Enable(OpenGL.GLU_CULLING);
             gl.FrontFace(OpenGL.GL_CCW);
+            gl.LoadIdentity();
+
+            
             gl.Enable(OpenGL.GL_COLOR_MATERIAL);
             gl.ColorMaterial(OpenGL.GL_FRONT, OpenGL.GL_AMBIENT_AND_DIFFUSE);
 
-            setupLighting(gl);
-            
-
-            
-
-            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_NEAREST);     // Nearest Neighbour Filtering
-            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_NEAREST);     // Nearest Neighbour Filtering
-            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_S, OpenGL.GL_REPEAT);
-            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_T, OpenGL.GL_REPEAT);
-            
-            gl.TexEnv(OpenGL.GL_TEXTURE_ENV, OpenGL.GL_TEXTURE_ENV_MODE, OpenGL.GL_ADD);
+            SetupLighting(gl);
 
             gl.Enable(OpenGL.GL_TEXTURE_2D);
+            gl.TexEnv(OpenGL.GL_TEXTURE_ENV, OpenGL.GL_TEXTURE_ENV_MODE, OpenGL.GL_ADD);
 
             gl.GenTextures(m_textureCount, m_textures);
             for(int i = 0; i < m_textureCount; ++i)
@@ -451,10 +435,10 @@ namespace GrafikaProj
                                                       System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
                 gl.Build2DMipmaps(OpenGL.GL_TEXTURE_2D, (int)OpenGL.GL_RGBA8, image.Width, image.Height, OpenGL.GL_BGRA, OpenGL.GL_UNSIGNED_BYTE, imageData.Scan0);
-                //gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_NEAREST);		// Nearest Neighbour Filtering
-                //gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_NEAREST);		// Nearest Neighbour Filtering
-                //gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_S, OpenGL.GL_REPEAT);
-                //gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_T, OpenGL.GL_REPEAT);
+                gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_NEAREST);		// Nearest Neighbour Filtering
+                gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_NEAREST);		// Nearest Neighbour Filtering
+                gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_S, OpenGL.GL_REPEAT);
+                gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_T, OpenGL.GL_REPEAT);
 
                 //gl.Enable(OpenGL.GL_TEXTURE_GEN_S);
                 //gl.Enable(OpenGL.GL_TEXTURE_GEN_T);
@@ -472,13 +456,7 @@ namespace GrafikaProj
             
         }
 
-        /// <summary>
-        ///  Funkcija ograničava vrednost na opseg min - max
-        /// </summary>
-        public static float Clamp(float value, float min, float max)
-        {
-            return (value < min) ? min : (value > max) ? max : value;
-        }
+        
 
         /// <summary>
         /// Podesavanja viewport-a i perspektive
@@ -500,9 +478,10 @@ namespace GrafikaProj
         public void Draw(OpenGL gl)
         {
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
-
-            gl.PushMatrix();
             
+            gl.PushMatrix();
+            SetupLighting(gl);
+
             gl.Translate(0.0f, 0.0f, -m_sceneDistance);
             gl.Rotate(m_xRotation, 1.0f, 0.0f, 0.0f);
             gl.Rotate(m_yRotation, 0.0f, 1.0f, 0.0f);
@@ -510,24 +489,25 @@ namespace GrafikaProj
                        0.0f, 250.0f, 650.0f,
                        0.0f, 1.0f, 0.0f);
 
+
             TestKockica(gl, 0.0f, 800.0f, -700.0f);
+            TestKockica(gl, 750.0f, 500.0f, 300.0f);
+
+
+            DrawCube(gl);
+            DrawBullet(gl);
+
+            DrawCilinder(gl);
+
+            
+
             DrawGround(gl);
 
             DrawPistol(gl);
 
-            DrawCube(gl);
-
-            DrawCilinder(gl);
-
-            DrawBullet(gl);
-
-            
             Draw3DText(gl);
-            
 
             gl.PopMatrix();
-
-            
 
             gl.Flush();
         }
@@ -536,23 +516,19 @@ namespace GrafikaProj
         /// Podesava osvetljenje u scecni
         /// </summary>
         /// <param name="gl"></param>
-        public void setupLighting(OpenGL gl)
+        public void SetupLighting(OpenGL gl)
         {
             
 
             float[] ambijentalnaKomponenta = { 1.0f, 1.0f, 1.0f, 1.0f };
             float[] difuznaKomponenta = { 1.0f, 1.0f, 1.0f, 1.0f };
-            //float[] specularnaKomponenta = { 1.0f, 1.0f, 1.0f, 1.0f };
-            //float[] lightPos0 = { 600.0f, -300.0f, 650.0f };
-            float[] lightPos0 = { 500.0f, 500.0f, 850.0f };
+            
+            float[] lightPos0 = { 750.0f, 500.0f, 300.0f, 1.0f };
             //pridruzivanje ambijentalne i difuzne komponente svetlosnom izvoru LIGHT0
             gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_SPOT_CUTOFF, 180.0f);
             gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_POSITION, lightPos0);
             gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_AMBIENT, ambijentalnaKomponenta);
             gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_DIFFUSE, difuznaKomponenta);
-            //gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_SPECULAR, specularnaKomponenta);
-            //podesavanje cuttoff-a na 180 da bi svetlost bila tackasta
-            
 
             gl.Enable(OpenGL.GL_LIGHTING);
             gl.Enable(OpenGL.GL_LIGHT0);
@@ -562,56 +538,21 @@ namespace GrafikaProj
 
             float[] ambijentalnaKomponentaBlue = { ambientR, ambientG, ambientB, 1.0f };
             float[] difuznaKomponentaBlue = { 0.0f, 0.0f, 1.0f, 1.0f };
-           // float[] specularnaKomponentaBlue = { 0.0f, 0.0f, 1.0f, 1.0f };
-            float[] lightPos1 = { 0.0f, 800.0f, -700.0f, 1.0f };
-            //float[] lightPos1 = { 500f, 300.0f, -700.0f, 1.0f };
             
+            float[] lightPos1 = { 0.0f, 800.0f, -700.0f, 1.0f };
 
-            float[] smer = { 0.0f, 0.0f, -1.0f };
+            float[] smer = { -1.0f, 0.0f, 0.0f };
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_DIRECTION, smer);
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_CUTOFF, 25.0f);
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_POSITION, lightPos1);
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_AMBIENT, ambijentalnaKomponentaBlue);
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_DIFFUSE, difuznaKomponentaBlue);
-            //gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPECULAR, specularnaKomponentaBlue);
-            // Podesi parametre reflektorkskog izvora
-
-
 
             gl.Enable(OpenGL.GL_LIGHTING);
             gl.Enable(OpenGL.GL_LIGHT1);
 
             gl.Enable(OpenGL.GL_NORMALIZE);
 
-            
-        }
-
-        public void setupTargetLight(OpenGL gl)
-        {
-            
-
-            float[] ambijentalnaKomponenta = { ambientR, ambientG, ambientB, 1.0f };
-            float[] difuznaKomponenta = { 0.0f, 0.0f, 1.0f, 1.0f };
-            float[] specularnaKomponenta = { 0.0f, 0.0f, 1.0f, 1.0f };
-            float[] lightPos1 = { 0.0f, 500.0f, -700.0f, 1.0f };
-            //float[] lightPos1 = { 500f, 300.0f, -700.0f, 1.0f };
-            
-
-            float[] smer = { 0.0f, -1.0f, 0.0f };
-            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_DIRECTION, smer);
-            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_CUTOFF, 25.0f);
-            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_POSITION, lightPos1);
-            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_AMBIENT, ambijentalnaKomponenta);
-            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_DIFFUSE, difuznaKomponenta);
-            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPECULAR, specularnaKomponenta);
-            // Podesi parametre reflektorkskog izvora
-            
-            
-
-            gl.Enable(OpenGL.GL_LIGHTING);
-            gl.Enable(OpenGL.GL_LIGHT1);
-            
-            gl.Enable(OpenGL.GL_NORMALIZE);
             
         }
 
@@ -646,20 +587,25 @@ namespace GrafikaProj
             
 
             gl.PushMatrix();
-            
-            gl.Translate(0.0f, 250.0f, 650.0f + pistolAnimationPosition);
-            gl.Rotate(pistolRotation, 0.0f, 0.0f);
-            gl.Scale(1.2f, 1.2f, 1.2f);
-            gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Woood]);
+            {
+                gl.MatrixMode(OpenGL.GL_TEXTURE);
+                gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Woood]);
 
-            //gl.Enable(OpenGL.GL_TEXTURE_GEN_S);
-            //gl.Enable(OpenGL.GL_TEXTURE_GEN_T);
-            
-            m_scene.Draw();
-            
-            //gl.Disable(OpenGL.GL_TEXTURE_GEN_S);
-            //gl.Disable(OpenGL.GL_TEXTURE_GEN_T);
-            
+                gl.PushMatrix();
+                {
+                    gl.MatrixMode(OpenGL.GL_MODELVIEW);
+                    gl.Translate(0.0f, 250.0f, 650.0f + pistolAnimationPosition);
+                    gl.Rotate(pistolRotation, 0.0f, 0.0f);
+                    gl.Scale(1.2f, 1.2f, 1.2f);
+                    gl.TexCoord(1.0f);
+                    m_scene.Draw();
+                    gl.MatrixMode(OpenGL.GL_TEXTURE);
+                }
+                gl.PopMatrix();
+                gl.MatrixMode(OpenGL.GL_MODELVIEW);
+
+
+            }
             gl.PopMatrix();
             
         }
@@ -668,6 +614,7 @@ namespace GrafikaProj
         {
 
             gl.PushMatrix();
+            
             gl.Translate(0.0f, 400.0f, 450.0f + bulletAnimationPosition);
             gl.Scale(bulletCaliber, bulletCaliber, 10);
             gl.Color(1.0f, 0.0f, 1.0f);
@@ -687,40 +634,63 @@ namespace GrafikaProj
             
 
             gl.PushMatrix();
+            {
+                gl.Color(0.5f, 0.5f, 0.5f);
+                gl.MatrixMode(OpenGL.GL_TEXTURE);
+                gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Concrete]);
 
-            gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Concrete]);
-            gl.Begin(OpenGL.GL_QUADS);
+                gl.PushMatrix();
+                {
+                    gl.MatrixMode(OpenGL.GL_MODELVIEW);
+                    gl.Begin(OpenGL.GL_QUADS);
 
-            gl.Color(0.5f, 0.5f, 0.5f);
-            gl.Normal(0.0f, -1.0f, 0.0f);
-            gl.TexCoord(0.0f, 0.0f);
-            gl.Vertex(-1000.0f, 0.0f, 1000.0f);
-            gl.TexCoord(0.0f, 1.0f);
-            gl.Vertex(1000.0f, 0.0f, 1000.0f);
-            gl.TexCoord(1.0f, 1.0f);
-            gl.Vertex(1000.0f, 0.0f, -1000.0f);
-            gl.TexCoord(1.0f, 0.0f);
-            gl.Vertex(-1000.0f, 0.0f, -1000.0f);
+                    
+                    gl.Normal(0.0f, -1.0f, 0.0f);
+                    gl.TexCoord(0.0f, 0.0f);
+                    gl.Vertex(-1000.0f, 0.0f, 1000.0f);
+                    gl.TexCoord(0.0f, 1.0f);
+                    gl.Vertex(1000.0f, 0.0f, 1000.0f);
+                    gl.TexCoord(1.0f, 1.0f);
+                    gl.Vertex(1000.0f, 0.0f, -1000.0f);
+                    gl.TexCoord(1.0f, 0.0f);
+                    gl.Vertex(-1000.0f, 0.0f, -1000.0f);
+                    gl.End();
+                    gl.MatrixMode(OpenGL.GL_TEXTURE);
+                }
+                gl.PopMatrix();
+                gl.MatrixMode(OpenGL.GL_MODELVIEW);
 
-            
-
-            gl.End();
-
-
+            }
             gl.PopMatrix();
+
         }
 
         public void DrawCube(OpenGL gl)
         {
 
-            gl.PushMatrix();
-            gl.Translate(0.0f, 160f, -700.0f);
-            gl.Scale(300, 150, 100);
-            gl.Color(1.0f, 1.0f, 0.0f);
-            Cube cube = new Cube();
-            cube.Render(gl, SharpGL.SceneGraph.Core.RenderMode.Render);
-            gl.PopMatrix();
+            
 
+            gl.PushMatrix();
+            {
+                gl.MatrixMode(OpenGL.GL_TEXTURE);
+                gl.Disable(OpenGL.GL_TEXTURE_2D);
+
+                gl.PushMatrix();
+                {
+                    gl.MatrixMode(OpenGL.GL_MODELVIEW);
+                    gl.Translate(0.0f, 160f, -700.0f);
+                    gl.Scale(300, 150, 100);
+                    gl.Color(0.5f, 0.5f, 0.0f);
+                    Cube cube = new Cube();
+                    cube.Render(gl, SharpGL.SceneGraph.Core.RenderMode.Render);
+                }
+                gl.PopMatrix();
+                gl.MatrixMode(OpenGL.GL_TEXTURE);
+                gl.Enable(OpenGL.GL_TEXTURE_2D);
+            }
+            gl.PopMatrix();
+            gl.MatrixMode(OpenGL.GL_MODELVIEW);
+            
         }
 
 
@@ -730,22 +700,9 @@ namespace GrafikaProj
             specificCubeHeight = targetAnimationHeight;
             //crtanje prve konzerve
             gl.PushMatrix();
-
-            
-
-            
-           // specificCubeHeight = Clamp(specificCubeHeight, 0.0f, 3.0f);
-
-            //gl.Translate(0.0f, 300.0f + targetValueHeight, -700.0f);
             gl.Translate(0.0f, 300.0f + specificCubeHeight, -700.0f);
-            
             gl.Color(0.0f, 0.0f, 0.0f);
-           
-            //gl.Translate(0.0f, 200.0f, -1000.0f);
             gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Rust]);
-            
-           //// 
-            
             gl.Rotate(-90.0f, 0.0f, 0.0f);
             gl.Scale(50, 50, targetValueHeight);
             Cylinder cil = new Cylinder();
@@ -765,8 +722,9 @@ namespace GrafikaProj
             //gl.Color(0.5f, 0.5f, 1.0f);
             gl.Scale(50, 50, targetValueHeight);
 
-            //gl.Translate(0.0f, 200.0f, -1000.0f);
+            
             gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Rust]);
+            
 
             Cylinder cil1 = new Cylinder();
             cil1.TopRadius = cil.BaseRadius;
@@ -785,7 +743,9 @@ namespace GrafikaProj
             gl.Rotate(-90.0f, 0.0f, 0.0f);
             //gl.Color(0.5f, 0.5f, 1.0f);
             gl.Scale(50, 50, targetValueHeight);
+            
             gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Rust]);
+            
             gl.TexCoord(1.0f, 0.0f);
             //gl.Translate(0.0f, 200.0f, -1000.0f);
             Cylinder cil2 = new Cylinder();

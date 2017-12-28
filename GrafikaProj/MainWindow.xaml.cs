@@ -120,59 +120,87 @@ namespace GrafikaProj
             }
         }
 
-        private void tagetValueChanged(object sender, TextChangedEventArgs e)
+
+
+       
+
+        private void targetHup(object sender, RoutedEventArgs e)
         {
-            float val = float.Parse(targetHeightVal.Text, CultureInfo.InvariantCulture.NumberFormat);
-
-            if(m_world != null)
-            {
-                m_world.TargetValueHeight = val;
-            }
-        }
-
-        private void bulletCaliberVal_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            float val = float.Parse(bulletCaliberVal.Text, CultureInfo.InvariantCulture.NumberFormat);
-
-            if(m_world != null)
-            {
-                m_world.BulletCaliber = val;
-            }
-        }
-
-        private void ambientRVal_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            float val = float.Parse(ambientRVal.Text, CultureInfo.InvariantCulture.NumberFormat);
-            if(m_world != null)
-            {
-                m_world.AmbientR = val;
-            }
-        }
-
-        private void ambientGVal_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            float val = float.Parse(ambientGVal.Text, CultureInfo.InvariantCulture.NumberFormat);
             if (m_world != null)
             {
-                m_world.AmbientG = val;
+                m_world.TargetValueHeight = m_world.TargetValueHeight + 100.0f;
             }
         }
 
-        private void ambientBVal_TextChanged(object sender, TextChangedEventArgs e)
+        private void targetHdown(object sender, RoutedEventArgs e)
         {
-            float val = float.Parse(ambientBVal.Text, CultureInfo.InvariantCulture.NumberFormat);
             if (m_world != null)
             {
-                m_world.AmbientB = val;
+                m_world.TargetValueHeight = m_world.TargetValueHeight - 100.0f;
             }
         }
 
-        private void ambientUVal_TextChanged(object sender, TextChangedEventArgs e)
+        private void calibarVUp(object sender, RoutedEventArgs e)
         {
-            float val = float.Parse(ambientUVal.Text, CultureInfo.InvariantCulture.NumberFormat);
             if (m_world != null)
             {
-                m_world.AmbientU = val;
+                m_world.BulletCaliber = m_world.BulletCaliber + 10.0f;
+            }
+        }
+
+        private void calibarDown_Click(object sender, RoutedEventArgs e)
+        {
+            if (m_world != null)
+            {
+                m_world.BulletCaliber = m_world.BulletCaliber - 10.0f;
+            }
+        }
+
+        private void ambientRUp_Click(object sender, RoutedEventArgs e)
+        {
+            if(m_world != null)
+            {
+                m_world.AmbientR += 0.2f;
+            }
+        }
+
+        private void ambientRDown_Click(object sender, RoutedEventArgs e)
+        {
+            if (m_world != null)
+            {
+                m_world.AmbientR -= 0.2f;    
+            }
+        }
+
+        private void ambientGUp_Click(object sender, RoutedEventArgs e)
+        {
+            if (m_world != null)
+            {
+                m_world.AmbientG += 0.2f;
+            }
+        }
+
+        private void ambientGDown_Click(object sender, RoutedEventArgs e)
+        {
+            if (m_world != null)
+            {
+                m_world.AmbientG -= 0.2f;
+            }
+        }
+
+        private void ambientBUp_Click(object sender, RoutedEventArgs e)
+        {
+            if (m_world != null)
+            {
+                m_world.AmbientB += 0.2f;
+            }
+        }
+
+        private void ambientBDown_Click(object sender, RoutedEventArgs e)
+        {
+            if (m_world != null)
+            {
+                m_world.AmbientB -= 0.2f;
             }
         }
     }
