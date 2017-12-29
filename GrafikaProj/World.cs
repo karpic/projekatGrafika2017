@@ -25,6 +25,9 @@ namespace GrafikaProj
         /// <summary>
         /// targert timeri i polja
         /// </summary>
+        /// 
+        private bool animationRunning = false;
+
         private DispatcherTimer timer1;
         private DispatcherTimer timer2;
         private int targetJumpCounter = 0;
@@ -120,6 +123,18 @@ namespace GrafikaProj
         #endregion
 
         #region Public polja
+
+        public bool AnimationRunning
+        {
+            get
+            {
+                return animationRunning;
+            }
+            set
+            {
+                animationRunning = value;
+            }
+        }
 
         public float AmbientR
         {
@@ -314,6 +329,7 @@ namespace GrafikaProj
                 targetJumpCounter = 0;
                 stopTargetTimers();
                 resetAnimation();
+                animationRunning = false;
             }
 
         }
@@ -337,6 +353,7 @@ namespace GrafikaProj
             pistolTimer.Interval = TimeSpan.FromMilliseconds(20);
             pistolTimer.Tick += new EventHandler(PostaviPistolj);
             pistolTimer.Start();
+            animationRunning = true;
         }
 
         private void PostaviPistolj(object sender, EventArgs e)
@@ -414,7 +431,9 @@ namespace GrafikaProj
             gl.Enable(OpenGL.GL_COLOR_MATERIAL);
             gl.ColorMaterial(OpenGL.GL_FRONT, OpenGL.GL_AMBIENT_AND_DIFFUSE);
 
+            gl.Enable(OpenGL.GL_LIGHTING);
             SetupLighting(gl);
+            
 
             gl.Enable(OpenGL.GL_TEXTURE_2D);
             gl.TexEnv(OpenGL.GL_TEXTURE_ENV, OpenGL.GL_TEXTURE_ENV_MODE, OpenGL.GL_ADD);
@@ -488,7 +507,7 @@ namespace GrafikaProj
             gl.LookAt(100.0f, 250.0f, 650.0f,
                        0.0f, 250.0f, 650.0f,
                        0.0f, 1.0f, 0.0f);
-
+            
 
             TestKockica(gl, 0.0f, 800.0f, -700.0f);
             TestKockica(gl, 750.0f, 500.0f, 300.0f);
@@ -509,6 +528,8 @@ namespace GrafikaProj
 
             gl.PopMatrix();
 
+
+            
             gl.Flush();
         }
 
@@ -519,38 +540,34 @@ namespace GrafikaProj
         public void SetupLighting(OpenGL gl)
         {
             
-
+            /*
             float[] ambijentalnaKomponenta = { 1.0f, 1.0f, 1.0f, 1.0f };
             float[] difuznaKomponenta = { 1.0f, 1.0f, 1.0f, 1.0f };
-            
-            float[] lightPos0 = { 750.0f, 500.0f, 300.0f, 1.0f };
-            //pridruzivanje ambijentalne i difuzne komponente svetlosnom izvoru LIGHT0
-            gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_SPOT_CUTOFF, 180.0f);
-            gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_POSITION, lightPos0);
             gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_AMBIENT, ambijentalnaKomponenta);
             gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_DIFFUSE, difuznaKomponenta);
-
-            gl.Enable(OpenGL.GL_LIGHTING);
+            gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_SPOT_CUTOFF, 180.0f);
             gl.Enable(OpenGL.GL_LIGHT0);
-
+            float[] lightPos0 = { 750.0f, 500.0f, 300.0f, 1.0f };
+            //pridruzivanje ambijentalne i difuzne komponente svetlosnom izvoru LIGHT0
+            
+            gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_POSITION, lightPos0);
+            */
 
             
-
             float[] ambijentalnaKomponentaBlue = { ambientR, ambientG, ambientB, 1.0f };
             float[] difuznaKomponentaBlue = { 0.0f, 0.0f, 1.0f, 1.0f };
             
             float[] lightPos1 = { 0.0f, 800.0f, -700.0f, 1.0f };
 
-            float[] smer = { -1.0f, 0.0f, 0.0f };
-            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_DIRECTION, smer);
-            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_CUTOFF, 25.0f);
-            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_POSITION, lightPos1);
+            float[] smer = {1.0f, 0.0f, 0.0f };
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_AMBIENT, ambijentalnaKomponentaBlue);
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_DIFFUSE, difuznaKomponentaBlue);
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_DIRECTION, smer);
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_CUTOFF, 25.0f);
 
-            gl.Enable(OpenGL.GL_LIGHTING);
             gl.Enable(OpenGL.GL_LIGHT1);
-
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_POSITION, lightPos1);
+            
             gl.Enable(OpenGL.GL_NORMALIZE);
 
             
@@ -589,7 +606,7 @@ namespace GrafikaProj
             gl.PushMatrix();
             {
                 gl.MatrixMode(OpenGL.GL_TEXTURE);
-                gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Woood]);
+                gl.Disable(OpenGL.GL_TEXTURE_2D);
 
                 gl.PushMatrix();
                 {
@@ -600,6 +617,7 @@ namespace GrafikaProj
                     gl.TexCoord(1.0f);
                     m_scene.Draw();
                     gl.MatrixMode(OpenGL.GL_TEXTURE);
+                    gl.Enable(OpenGL.GL_TEXTURE_2D);
                 }
                 gl.PopMatrix();
                 gl.MatrixMode(OpenGL.GL_MODELVIEW);
@@ -672,21 +690,22 @@ namespace GrafikaProj
 
             gl.PushMatrix();
             {
+                gl.Color(0.5f, 0.35f, 0.05f);
                 gl.MatrixMode(OpenGL.GL_TEXTURE);
-                gl.Disable(OpenGL.GL_TEXTURE_2D);
+                gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.Woood]);
 
                 gl.PushMatrix();
                 {
                     gl.MatrixMode(OpenGL.GL_MODELVIEW);
                     gl.Translate(0.0f, 160f, -700.0f);
                     gl.Scale(300, 150, 100);
-                    gl.Color(0.5f, 0.5f, 0.0f);
+                    
                     Cube cube = new Cube();
                     cube.Render(gl, SharpGL.SceneGraph.Core.RenderMode.Render);
                 }
                 gl.PopMatrix();
                 gl.MatrixMode(OpenGL.GL_TEXTURE);
-                gl.Enable(OpenGL.GL_TEXTURE_2D);
+                
             }
             gl.PopMatrix();
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
@@ -764,6 +783,7 @@ namespace GrafikaProj
             
             gl.Viewport(m_width / 2, 0, m_width / 2, m_height / 2);
             
+
             gl.PushMatrix();
             
             gl.Translate(0.0f, 0.0f, 0.0f);
@@ -809,6 +829,7 @@ namespace GrafikaProj
 
             gl.PopMatrix();
 
+            
             gl.Viewport(0, 0, m_width, m_height); //resetuj na stari view port
             
         }

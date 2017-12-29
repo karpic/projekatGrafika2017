@@ -91,13 +91,14 @@ namespace GrafikaProj
             switch (e.Key)
             {
                 case Key.F10: this.Close(); break;
-                case Key.W: m_world.RotationX -= 5.0f; break;
-                case Key.S: m_world.RotationX += 5.0f; break;
-                case Key.A: m_world.RotationY -= 5.0f; break;
-                case Key.D: m_world.RotationY += 5.0f; break;
-                case Key.Add: m_world.SceneDistance -= 700.0f; break;
-                case Key.Subtract: m_world.SceneDistance += 700.0f; break;
-                case Key.X: m_world.startPistolAnimation(); break;
+                case Key.T: if(!m_world.AnimationRunning) m_world.RotationX -= 5.0f; break;
+                case Key.G: if (!m_world.AnimationRunning) m_world.RotationX += 5.0f; break;
+                case Key.F: if (!m_world.AnimationRunning) m_world.RotationY -= 5.0f; break;
+                case Key.H: if (!m_world.AnimationRunning) m_world.RotationY += 5.0f; break;
+                case Key.Add: if (!m_world.AnimationRunning) m_world.SceneDistance -= 700.0f; break;
+                case Key.Subtract: if (!m_world.AnimationRunning) m_world.SceneDistance += 700.0f; break;
+                case Key.X: if (!m_world.AnimationRunning) m_world.startPistolAnimation(); break;
+                case Key.F12: this.Close(); break;
                /* case Key.F2:
                     OpenFileDialog opfModel = new OpenFileDialog();
                     bool result = (bool)opfModel.ShowDialog();
@@ -126,7 +127,7 @@ namespace GrafikaProj
 
         private void targetHup(object sender, RoutedEventArgs e)
         {
-            if (m_world != null)
+            if (m_world != null && m_world.AnimationRunning ==false)
             {
                 m_world.TargetValueHeight = m_world.TargetValueHeight + 100.0f;
             }
@@ -134,7 +135,7 @@ namespace GrafikaProj
 
         private void targetHdown(object sender, RoutedEventArgs e)
         {
-            if (m_world != null)
+            if (m_world != null && m_world.AnimationRunning == false)
             {
                 m_world.TargetValueHeight = m_world.TargetValueHeight - 100.0f;
             }
@@ -142,7 +143,7 @@ namespace GrafikaProj
 
         private void calibarVUp(object sender, RoutedEventArgs e)
         {
-            if (m_world != null)
+            if (m_world != null && m_world.AnimationRunning == false)
             {
                 m_world.BulletCaliber = m_world.BulletCaliber + 10.0f;
             }
@@ -150,7 +151,7 @@ namespace GrafikaProj
 
         private void calibarDown_Click(object sender, RoutedEventArgs e)
         {
-            if (m_world != null)
+            if (m_world != null && m_world.AnimationRunning == false)
             {
                 m_world.BulletCaliber = m_world.BulletCaliber - 10.0f;
             }
@@ -158,7 +159,7 @@ namespace GrafikaProj
 
         private void ambientRUp_Click(object sender, RoutedEventArgs e)
         {
-            if(m_world != null)
+            if(m_world != null && m_world.AnimationRunning == false)
             {
                 m_world.AmbientR += 0.2f;
             }
@@ -166,7 +167,7 @@ namespace GrafikaProj
 
         private void ambientRDown_Click(object sender, RoutedEventArgs e)
         {
-            if (m_world != null)
+            if (m_world != null && m_world.AnimationRunning == false)
             {
                 m_world.AmbientR -= 0.2f;    
             }
@@ -174,7 +175,7 @@ namespace GrafikaProj
 
         private void ambientGUp_Click(object sender, RoutedEventArgs e)
         {
-            if (m_world != null)
+            if (m_world != null && m_world.AnimationRunning == false)
             {
                 m_world.AmbientG += 0.2f;
             }
@@ -182,7 +183,7 @@ namespace GrafikaProj
 
         private void ambientGDown_Click(object sender, RoutedEventArgs e)
         {
-            if (m_world != null)
+            if (m_world != null && m_world.AnimationRunning == false)
             {
                 m_world.AmbientG -= 0.2f;
             }
@@ -190,7 +191,7 @@ namespace GrafikaProj
 
         private void ambientBUp_Click(object sender, RoutedEventArgs e)
         {
-            if (m_world != null)
+            if (m_world != null && m_world.AnimationRunning == false)
             {
                 m_world.AmbientB += 0.2f;
             }
@@ -198,7 +199,7 @@ namespace GrafikaProj
 
         private void ambientBDown_Click(object sender, RoutedEventArgs e)
         {
-            if (m_world != null)
+            if (m_world != null && m_world.AnimationRunning == false)
             {
                 m_world.AmbientB -= 0.2f;
             }

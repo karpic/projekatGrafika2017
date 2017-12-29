@@ -1,4 +1,3 @@
-C:\Users\Arsenije\source\repos\GrafikaProj\GrafikaProj\obj\Debug\GrafikaProj.csprojResolveAssemblyReference.cache
 C:\Users\Arsenije\source\repos\GrafikaProj\GrafikaProj\obj\Debug\MainWindow.g.cs
 C:\Users\Arsenije\source\repos\GrafikaProj\GrafikaProj\obj\Debug\App.g.cs
 C:\Users\Arsenije\source\repos\GrafikaProj\GrafikaProj\obj\Debug\GrafikaProj_Content.g.cs
@@ -25,3 +24,4 @@ C:\Users\Arsenije\source\repos\GrafikaProj\GrafikaProj\obj\Debug\GrafikaProj.csp
 C:\Users\Arsenije\source\repos\GrafikaProj\GrafikaProj\obj\Debug\GrafikaProj.exe
 C:\Users\Arsenije\source\repos\GrafikaProj\GrafikaProj\obj\Debug\GrafikaProj.pdb
 C:\Users\Arsenije\source\repos\GrafikaProj\GrafikaProj\bin\Debug\model\metak\Bullet.3ds
+C:\Users\Arsenije\source\repos\GrafikaProj\GrafikaProj\obj\Debug\GrafikaProj.csprojResolveAssemblyReference.cache
